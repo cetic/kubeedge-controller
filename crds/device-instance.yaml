@@ -1,0 +1,42 @@
+apiVersion: devices.kubeedge.io/v1alpha2
+kind: Device
+metadata:
+  name: edge-dev-01 #Device ID
+  labels:
+    description: 'dev'
+    manufacturer: 'test'
+spec:
+  deviceModelRef:
+    name: edge-worker #Device Model
+  nodeSelector:
+    nodeSelectorTerms:
+    - matchExpressions:
+      - key: ''
+        operator: In
+        values:
+        - station-1  #EdgeNode name
+status:
+  twins:
+    - propertyName: job
+      desired:
+        metadata:
+          type: string
+        value: "Launch"
+      reported:
+        metadata:
+          type: string
+        value: "None"
+    - propertyName: arg
+      desired:
+        metadata:
+          type: string
+        value: "hello-loop.py"
+      reported:
+        metadata:
+          type: string
+        value: "None"
+    - propertyName: status
+      desired:
+        metadata:
+          type: string
+        value: ''

@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
+	"time"
+
 	//"flag"
 	//"fmt"
 	//log "github.com/sirupsen/logrus"
 	//"io/ioutil"
 	//"net/http"
 	//"fmt"
+	"github.com/cetic/kubeedge-controller/internal/config"
 	"github.com/cetic/kubeedge-controller/internal/core"
 	log "github.com/sirupsen/logrus"
 	//"github.com/cetic/kubeedge-controller/internal/webserver"
@@ -30,19 +34,34 @@ import (
 //  go d.Launch(filename,url)
 //}
 //
-//func Passthrough(w http.ResponseWriter, r *http.Request) {
-//  if d.FSM.Current() == "run" {
-//    d.AddDesiredJob("Stop")
-//    d.PatchStatus()
-//    for d.FSM.Current() != "ready" {
-//      time.Sleep(500*time.Millisecond)
-//    }
-//  }
-//
-//  filename := "/app/passthrough.py"
-//  url := ""
-//  go d.Launch(filename,url)
-//}
+func Passthrough() {
+	if d.FSM.Current() == "run" {
+		d.AddDesiredJob("Stop")
+		d.PatchStatus()
+		for d.FSM.Current() != "ready" {
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
+
+	filename := "/Users/tse/CETIC/viaduct/POCEdge/kubeedge-edge-worker/mapper/me-loop.py"
+	url := ""
+	go d.Launch(filename, url)
+}
+
+func Passthrough2() {
+	if d.FSM.Current() == "run" {
+		d.AddDesiredJob("Stop")
+		d.PatchStatus()
+		for d.FSM.Current() != "ready" {
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
+
+	filename := "/Users/tse/CETIC/viaduct/POCEdge/kubeedge-edge-worker/mapper/hello-loop.py"
+	url := ""
+	go d.Launch(filename, url)
+}
+
 //
 //
 //func Stop(w http.ResponseWriter, r *http.Request) {
@@ -58,26 +77,20 @@ import (
 var d = core.Device{}
 
 func main() {
-	log.Info(d)
-	//Config := dto.Config{}
-	//configFile := flag.String("c", "config/config.yaml", "config file")
-	//flag.Parse()
-	//args := flag.Args()
-	//myself := os.Args[0]
-	//if len(args) != 0 {
-	//  fmt.Printf("Wrong number of argument : %s [-c configfile] \n", myself)
-	//  os.Exit(1)
-	//}
-	//yamlFile, err := ioutil.ReadFile(*configFile)
-	//if err != nil {
-	//  log.Errorf("yamlFile.Get err   #%v ", err)
-	//}
-	//err = yaml.Unmarshal(yamlFile, &Config)
-	//if err != nil {
-	//  log.Errorf("Unmarshall err   #%v ", err)
-	//}
-	//crdClient, _ := core.NewCRDClient(os.Args[1],os.Args[2])
-	//d.InitDevice(os.Args[3],"default",crdClient)
+	log.SetLevel(log.DebugLevel)
+	conf := config.Parse()
+	log.Debugf("kubeconfig File: %s", conf.KubeConfig)
+	log.Debugf("kubeconfig File: %s", conf.MasterAdress)
+	crdClient, _ := core.NewCRDClient(conf.MasterAdress, conf.KubeConfig)
+	d.InitDevice(conf.Device, "default", crdClient)
+	ctx := context.Background()
+	raw, _ := crdClient.Get().Namespace("default").Resource(core.ResourceTypeDevices).Name(conf.Device).DoRaw(ctx)
+	log.Debugf("result: %s", raw)
+	time.Sleep(10 * time.Second)
+	Passthrough()
+	time.Sleep(10 * time.Second)
+	Passthrough2()
+	time.Sleep(10 * time.Second)
 	//s := new(web.Site)
 	//s.Init()
 	//s.AddPage("Home","gotpl/welcome.gohtml","/passthrough","home", Passthrough)

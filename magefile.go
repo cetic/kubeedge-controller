@@ -6,15 +6,9 @@ import (
 	"github.com/magefile/mage/sh"
 
 	// mage:import
-	_ "go-dev.ec.homeshore.be/csc/internal/mage"
-	// mage:import
-	_ "go-dev.ec.homeshore.be/csc/plugins/mage"
+	_ "github.com/cetic/kubeedge-controller/internal/mage"
 )
 
-// Run GolangCI-Lint
-func Lint() error {
-	return sh.RunV("golangci-lint", "run")
-}
 
 // Run the tests
 func Test() error {
