@@ -1,0 +1,5 @@
+
+
+kubeconfig:  "/Users/tse/.kube/config"
+master: "https://10.129.1.26:6443"
+device: "edge-dev-01"

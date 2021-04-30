@@ -1,0 +1,5 @@
+
+
+kubeconfig:  ""
+master: ""
+device: "edge-dev-01"
