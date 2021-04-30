@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	ke "github.com/cetic/kubeedge-controller/internal/kubeedge"
 	"github.com/looplab/fsm"
+	log "github.com/sirupsen/logrus"
 	"k8s.io/client-go/rest"
-	"log"
 	"time"
 )
 
@@ -16,8 +16,8 @@ type Device struct {
 	Namespace string          `json:"-"`
 	crdClient *rest.RESTClient
 	FSM       *fsm.FSM `json:"-"`
-	Filename  string
-	Url       string
+	Filename  *string
+	Url       *string
 }
 
 func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
@@ -40,6 +40,10 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 	s.DeviceID = id
 	s.Namespace = ns
 	s.crdClient = crdClient
+	f := "defaultFilename"
+	s.Filename = &f
+	u := "defaultURL"
+	s.Url = &u
 	s.SyncStatus()
 	if s.GetStatus() != "Waiting" {
 		s.AddDesiredJob("Wait")
@@ -48,7 +52,7 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 		if err != nil {
 			return err
 		}
-		log.Println("Waiting request sended")
+		log.Info("Waiting request sended")
 		for s.GetStatus() != "Waiting" {
 			s.SyncStatus()
 			if err != nil {
@@ -57,7 +61,7 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 			time.Sleep(500 * time.Millisecond)
 		}
 	}
-	log.Println("Device Connected and Ready")
+	log.Info("Device Connected and Ready")
 	s.FSM = fsm.NewFSM(
 		"ready",
 		fsm.Events{
@@ -70,9 +74,9 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 		},
 		fsm.Callbacks{
 			"LaunchTask": func(e *fsm.Event) {
-				log.Printf("Launch app %s request", s.Filename)
+				log.Infof("Launch app %s request", *s.Filename)
 				s.AddDesiredJob("Launch")
-				s.AddDesiredArg(s.Filename)
+				s.AddDesiredArg(*s.Filename)
 				s.PatchStatus()
 			},
 			"TaskCompleted": func(e *fsm.Event) {
@@ -84,7 +88,7 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 				log.Printf("File %s not found on Device %s", s.Filename, s.DeviceID)
 				log.Printf("Download from ", s.Url)
 				s.AddDesiredJob("Download")
-				s.AddDesiredArg(s.Url)
+				s.AddDesiredArg(*s.Url)
 				s.PatchStatus()
 			},
 		},
@@ -93,9 +97,12 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 }
 
 func (s *Device) Launch(filename, url string) {
-	s.Filename = filename
-	s.Url = url
+	log.Debugf("filename : %s , url : %s", filename, url)
+	*s.Filename = filename
+	*s.Url = url
+	log.Debugf("filename : %s , url : %s", s.Filename, s.Url)
 	s.FSM.Event("LaunchTask")
+
 	for s.FSM.Current() != "ready" {
 		s.SyncStatus()
 		s.FSM.Event(s.GetStatus())

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: controller
+  namespace: controller
+spec:
+  containers:
+    - name: controller
+      image: ceticasbl/kubeedge-controller:latest
