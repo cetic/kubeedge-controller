@@ -1,4 +1,21 @@
-FROM nginx:1.15.8-alpine
-LABEL version="1.0.0"
-ENV REFRESHED_AT=2019-12-02-1
-COPY index.html /usr/share/nginx/html/index.html
+# build stage
+FROM golang as builder
+
+ENV GO111MODULE=on
+
+WORKDIR /app
+
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build /app/cmd/controller/main.go
+## final stage
+
+FROM scratch
+COPY --from=builder /app/main /app/
+COPY --from=builder /app/configs/internal.yaml /app/
+CMD ["/app/main","-c","/app/internal.yaml"]
