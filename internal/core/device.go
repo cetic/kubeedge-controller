@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"encoding/json"
 	ke "github.com/cetic/kubeedge-controller/internal/kubeedge"
 	"github.com/looplab/fsm"
@@ -18,6 +17,11 @@ type Device struct {
 	FSM       *fsm.FSM `json:"-"`
 	Filename  *string
 	Url       *string
+}
+
+func NewDevice() *Device {
+	var out Device
+	return &out
 }
 
 func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
@@ -126,17 +130,17 @@ func (s *Device) AddDesiredArg(arg string) {
 }
 
 func (s *Device) PatchStatus() ([]byte, error) {
-	ctx := context.Background()
+	//ctx := context.Background()
 	body, err := json.Marshal(s)
 	if err != nil {
 		return nil, err
 	}
-	return s.crdClient.Patch(MergePatchType).Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).Body(body).DoRaw(ctx)
+	return s.crdClient.Patch(MergePatchType).Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).Body(body).DoRaw()
 }
 
 func (s *Device) SyncStatus() error {
-	ctx := context.Background()
-	raw, err := s.crdClient.Get().Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).DoRaw(ctx)
+	//ctx := context.Background()
+	raw, err := s.crdClient.Get().Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).DoRaw()
 	_ = json.Unmarshal(raw, &s)
 	return err
 }

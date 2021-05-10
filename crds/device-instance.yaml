@@ -1,7 +1,7 @@
 apiVersion: devices.kubeedge.io/v1alpha2
 kind: Device
 metadata:
-  name: edge-dev-01 #Device ID
+  name: edge-dev-02 #Device ID
   labels:
     description: 'dev'
     manufacturer: 'test'
@@ -40,3 +40,8 @@ status:
         metadata:
           type: string
         value: ''
+    - propertyName: trigger
+      desired:
+        metadata:
+          type: string
+        value: 'unknown'

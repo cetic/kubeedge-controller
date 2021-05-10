@@ -1,6 +1,6 @@
 package api
 
-type Post struct {
+type Update struct {
 	Filename string `json:"filename"`
 	URL      string `json:"url"`
 }
