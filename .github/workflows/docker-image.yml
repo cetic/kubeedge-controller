@@ -12,7 +12,7 @@ jobs:
         uses: 1466587594/get-current-time@v2
         id: current-time
         with:
-          format: YYYYMMDD:HHMM
+          format: YYYYMMDD-HHMM
           utcOffset: "+01:00"
       - name: Check out the repo
         uses: actions/checkout@v2
