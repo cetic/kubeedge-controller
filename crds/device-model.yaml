@@ -23,3 +23,9 @@ spec:
      string:
       accessMode: ReadWrite
       defaultValue: 'None'
+  - name: trigger
+    description: trigger
+    type:
+      string:
+        accessMode: ReadOnly
+        defaultValue: 'Unknown'

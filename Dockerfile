@@ -17,5 +17,5 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build /app/cmd/controller/main.go
 
 FROM scratch
 COPY --from=builder /app/main /app/
-COPY --from=builder /app/configs/internal.yaml /app/
-CMD ["/app/main","-c","/app/internal.yaml"]
+COPY --from=builder /app/configs/internal.yaml /app/configs/
+CMD ["/app/main","-c","/app/configs/internal.yaml"]

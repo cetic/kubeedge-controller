@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: controller
+  namespace: controller
+spec:
+  containers:
+    - name: controller
+      image: ceticasbl/kubeedge-controller:latest
+      volumeMounts:
+        - name: config
+          mountPath: "/app/configs"
+          readOnly: true
+  volumes:
+    - name: config
+      configMap:
+        name: config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+data:
+  internal.yaml: |
+    kubeconfig: ""
+    master: ""
+    namespace: "default"
+    devices:
+      - "edge-dev-01"
+      - "edge-dev-02"

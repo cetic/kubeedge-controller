@@ -1,5 +1,8 @@
 
 
-kubeconfig:  "/Users/tse/.kube/config"
+kubeconfig:  "/Users/tse/.kube/config2"
 master: "https://10.129.1.26:6443"
-device: "edge-dev-01"
+namespace: "default"
+devices:
+  - "edge-dev-01"
+  - "edge-dev-02"
