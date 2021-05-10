@@ -2,4 +2,6 @@
 
 kubeconfig:  ""
 master: ""
-device: "edge-dev-01"
+namespace: "default"
+devices:
+  - "mydevice"
