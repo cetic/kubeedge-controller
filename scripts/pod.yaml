@@ -1,26 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller
+  namespace: controller
+  labels:
+    app: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: controller
+  template:
+    metadata:
+      labels:
+        app: controller
+    spec:
+      containers:
+        - name: controller
+          image: ceticasbl/kubeedge-controller:latest
+          ports:
+            - containerPort: 8090
+          volumeMounts:
+            - name: config
+              mountPath: "/app/configs"
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: config
+---
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
   name: controller
   namespace: controller
 spec:
-  containers:
-    - name: controller
-      image: ceticasbl/kubeedge-controller:latest
-      volumeMounts:
-        - name: config
-          mountPath: "/app/configs"
-          readOnly: true
-  volumes:
-    - name: config
-      configMap:
-        name: config
-
+  type: NodePort
+  selector:
+    app: controller
+  ports:
+    - protocol: TCP
+      port: 8090
+      targetPort: 8090
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config
+  namespace: controller
 data:
   internal.yaml: |
     kubeconfig: ""

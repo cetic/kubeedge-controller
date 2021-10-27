@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/emicklei/go-restful"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/client-go/rest"
+
 	//"time"
 	devices "github.com/kubeedge/kubeedge/cloud/pkg/apis/devices/v1alpha2"
 )
@@ -39,7 +41,7 @@ func (c *Controller) Init() {
 func (c Controller) GetDevicebyId(req *restful.Request, rsp *restful.Response) {
 	//ctx := context.Background()
 	deviceid := req.PathParameter("deviceid")
-	raw, _ := c.CRDClient.Get().Namespace(c.Namespace).Resource(ResourceTypeDevices).Name(deviceid).DoRaw()
+	raw, _ := c.CRDClient.Get().Namespace(c.Namespace).Resource(ResourceTypeDevices).Name(deviceid).DoRaw(context.TODO())
 	log.Debugf("raw: %s", raw)
 	result := devices.Device{}
 	_ = json.Unmarshal(raw, &result)

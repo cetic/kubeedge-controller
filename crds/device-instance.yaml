@@ -1,7 +1,7 @@
 apiVersion: devices.kubeedge.io/v1alpha2
 kind: Device
 metadata:
-  name: edge-dev-02 #Device ID
+  name: edge-dev-tse-mac #Device ID
   labels:
     description: 'dev'
     manufacturer: 'test'
@@ -14,7 +14,7 @@ spec:
       - key: ''
         operator: In
         values:
-        - station-1  #EdgeNode name
+        - edgestation  #EdgeNode name
 status:
   twins:
     - propertyName: job

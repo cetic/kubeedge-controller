@@ -1,12 +1,14 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
+	"time"
+
 	ke "github.com/cetic/kubeedge-controller/internal/kubeedge"
 	"github.com/looplab/fsm"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/client-go/rest"
-	"time"
 )
 
 type Device struct {
@@ -50,6 +52,7 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 	s.Url = &u
 	s.SyncStatus()
 	if s.GetStatus() != "Waiting" {
+		log.Debug("Device is not in Waiting Mode...")
 		s.AddDesiredJob("Wait")
 		s.AddDesiredArg("init")
 		_, err := s.PatchStatus()
@@ -97,6 +100,10 @@ func (s *Device) InitDevice(id, ns string, crdClient *rest.RESTClient) error {
 			},
 		},
 	)
+	go func(d *Device) {
+		log.Debugf("Current Status: %s", d.FSM.Current())
+		time.Sleep(time.Second)
+	}(s)
 	return nil
 }
 
@@ -135,12 +142,12 @@ func (s *Device) PatchStatus() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.crdClient.Patch(MergePatchType).Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).Body(body).DoRaw()
+	return s.crdClient.Patch(MergePatchType).Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).Body(body).DoRaw(context.TODO())
 }
 
 func (s *Device) SyncStatus() error {
 	//ctx := context.Background()
-	raw, err := s.crdClient.Get().Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).DoRaw()
+	raw, err := s.crdClient.Get().Namespace(s.Namespace).Resource(ResourceTypeDevices).Name(s.DeviceID).DoRaw(context.TODO())
 	_ = json.Unmarshal(raw, &s)
 	return err
 }
