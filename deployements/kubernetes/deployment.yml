@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller
+  namespace: kubeedge-demo
+  labels:
+    app: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: controller
+  template:
+    metadata:
+      labels:
+        app: controller
+    spec:
+      serviceAccountName: kubeedge-demo-sa
+      containers:
+        - name: controller
+          image: ceticasbl/kubeedge-controller:v1.0.0
+          ports:
+            - containerPort: 8090
+          volumeMounts:
+            - name: controller-config
+              mountPath: "/app/configs"
+              readOnly: true
+      volumes:
+        - name: controller-config
+          configMap:
+            name: controller-config

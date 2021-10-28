@@ -1,7 +1,8 @@
 apiVersion: devices.kubeedge.io/v1alpha2
 kind: Device
 metadata:
-  name: edge-dev-tse-mac #Device ID
+  name: edge-dev-demo-1 #Device ID
+  namespace: kubeedge-demo
   labels:
     description: 'dev'
     manufacturer: 'test'
@@ -21,7 +22,7 @@ status:
       desired:
         metadata:
           type: string
-        value: "Launch"
+        value: "Init"
       reported:
         metadata:
           type: string

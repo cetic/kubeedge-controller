@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: "devices.kubeedge.io:devices:devices-controller"
+subjects:
+  - kind: ServiceAccount
+    name: kubeedge-demo-sa
+    namespace: kubeedge-demo
+roleRef:
+  kind: ClusterRole
+  name: "devices.kubeedge.io:devices:controller"
+  apiGroup: rbac.authorization.k8s.io

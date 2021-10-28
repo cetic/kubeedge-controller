@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-config
+  namespace: kubeedge-demo
+data:
+  internal.yaml: |
+    kubeconfig: ""
+    master: ""
+    namespace: "kubeedge-demo"
+    devices:
+      - "edge-dev-demo-1"

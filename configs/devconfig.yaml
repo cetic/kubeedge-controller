@@ -1,5 +1,5 @@
-kubeconfig:  "/home/.kube/kubeconfig"
-master: "master IP"
-namespace: "default"
+kubeconfig:  "PATH_TO_KUBCEONFIG"
+master: "https://MASTER_IP:6443"
+namespace: "kubeedge-demo"
 devices:
-  - "edge-dev-01"
+  - "edge-dev-demo-1"
